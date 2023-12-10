@@ -9,9 +9,15 @@ public enum TargetEnum
     BottomLeft,
     BottomRight,
 }
+
+public enum DriveMode
+{
+    Manual,
+    Auto,
+}
 public class PlayerController : MonoBehaviour
 {
-    public float speed;
+    public float speed = 10;
     public Transform topLeftTransform;
     public Transform topRightTransform;
     public Transform bottomRightTransform;
@@ -21,6 +27,7 @@ public class PlayerController : MonoBehaviour
     private TargetEnum nextTarget = TargetEnum.TopLeft; //Gán trạng thái
     private Transform currentTarget;
 
+    private DriveMode mode = DriveMode.Manual;
 
     // Start is called before the first frame update
     void Start()
@@ -31,27 +38,58 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 targetPosition = currentTarget.position;
-        Vector3 moveDirection = targetPosition - transform.position;//Đường đi
-
-        float distance = moveDirection.magnitude; //Tính khoảng cách giữa 2 tọa độ
-
-        if(distance > 0.01f)
+        if(mode == DriveMode.Auto)
         {
-            //Khi chưa tới điểm tiếp theo vẫn tiếp tục di chuyển
-            transform.position = Vector3.MoveTowards(transform.position, currentTarget.position, speed * Time.deltaTime);
-                                                    //vị trí hiện tại, vị trí target,thời gian chuyển khung hình
+            AutoMode();
+        }
+        else if(mode == DriveMode.Manual)
+        {
+            ManualMode();
+        }
+    }
+
+    void AutoMode()
+    {
+        Vector3 targetPosition = currentTarget.position;
+        Vector3 moveDirection = targetPosition - transform.position;
+
+        float distance = moveDirection.magnitude; // Tính khoảng cách giữa 2 tọa độ
+
+        if (distance > 0.1f)
+        {
+            // Khi chưa tới điểm tiếp theo thì vẫn tiếp tục di chuyển
+            transform.position = Vector3.MoveTowards(transform.position,
+                currentTarget.position, speed * Time.deltaTime);
+
+            // Từ frame 1 => frame 2  
         }
         else
         {
-            //chuyển target
+            // Chuyen target
             SetNextTarget(nextTarget);
         }
 
-        //Thay đổi theo hướng Target
+        // Thay đổi góc quay theo hướng target
         Vector3 direction = currentTarget.position - transform.position;
         Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
         transform.rotation = targetRotation;
+    }
+
+    void ManualMode()
+    {
+        // Input.GetAxis
+        float horizontalInput = Input.GetAxisRaw("Horizontal");
+        float verticalInput = Input.GetAxisRaw("Vertical");
+
+     
+
+        // Tính toán vector di chuyển dựa trên input
+        Vector3 movement = new Vector3(horizontalInput, 0f, verticalInput) * speed * Time.deltaTime;
+
+        // Áp vị trí 
+        transform.Translate(movement);
+
+        Debug.Log(horizontalInput + ", " + verticalInput);
     }
 
     void SetNextTarget(TargetEnum target)
