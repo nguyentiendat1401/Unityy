@@ -29,10 +29,13 @@ public class PlayerController : MonoBehaviour
 
     private DriveMode mode = DriveMode.Manual;
 
+    private Rigidbody rb;
+
     // Start is called before the first frame update
     void Start()
     {
         currentTarget = topLeftTransform;
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -44,7 +47,7 @@ public class PlayerController : MonoBehaviour
         }
         else if(mode == DriveMode.Manual)
         {
-            ManualMode();
+            FixedUpdate();
         }
     }
 
@@ -75,14 +78,18 @@ public class PlayerController : MonoBehaviour
         transform.rotation = targetRotation;
     }
 
-    void ManualMode()
-    {
+    //void ManualMode()
+    //{
+
+       
+
+        /*
         // Input.GetAxis
         float horizontalInput = Input.GetAxisRaw("Horizontal");
         float verticalInput = Input.GetAxisRaw("Vertical");
 
      
-
+        
         // Tính toán vector di chuyển dựa trên input
         Vector3 movement = new Vector3(horizontalInput, 0f, verticalInput) * speed * Time.deltaTime;
 
@@ -90,8 +97,19 @@ public class PlayerController : MonoBehaviour
         transform.Translate(movement);
 
         Debug.Log(horizontalInput + ", " + verticalInput);
-    }
+        */
+    //}
 
+    private void FixedUpdate()
+    {
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
+
+        Vector3 movement = new Vector3(h, 0f, v) * speed * Time.deltaTime;
+        //rb.AddForce(speed * movement);
+        transform.Translate(movement);
+
+    }
     void SetNextTarget(TargetEnum target)
     {
         switch (target)
