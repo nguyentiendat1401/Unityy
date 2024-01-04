@@ -36,6 +36,7 @@ public class PlayerController : MonoBehaviour
     {
         currentTarget = topLeftTransform;
         rb = GetComponent<Rigidbody>();
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
     }
 
     // Update is called once per frame
@@ -108,6 +109,8 @@ public class PlayerController : MonoBehaviour
         Vector3 movement = new Vector3(h, 0f, v) * speed * Time.deltaTime;
         //rb.AddForce(speed * movement);
         transform.Translate(movement);
+
+        
 
     }
     void SetNextTarget(TargetEnum target)
